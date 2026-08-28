@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: honeymoon-pwa
+    runtime: static
+    repo: https://github.com/YOUR_USERNAME/honeymoon-pwa
+    branch: main
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+    routes:
+      # PWA/SPA 라우팅을 위해 모든 경로를 index.html로 리라이트
+      - type: rewrite
+        source: /*
+        destination: /index.html
