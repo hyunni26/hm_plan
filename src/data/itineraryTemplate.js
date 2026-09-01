@@ -69,5 +69,8 @@ export const ITINERARY_TEMPLATE = [
   { date: '2027-03-18', time: '18:00', city: '로마', title: '피우미치노 공항 이동 및 수속', place: null, memo: null, category: '이동' }
 ]
 
-// 날짜 목록 (템플릿 브라우저에서 날짜 탭 순서용)
+// 날짜 목록 (참고용)
 export const ITINERARY_DATES = [...new Set(ITINERARY_TEMPLATE.map((i) => i.date))]
+
+// 도시 목록 (템플릿에 등장하는 순서대로, 템플릿 브라우저의 도시 탭 순서용)
+export const ITINERARY_CITIES = [...new Set(ITINERARY_TEMPLATE.map((i) => i.city))]
