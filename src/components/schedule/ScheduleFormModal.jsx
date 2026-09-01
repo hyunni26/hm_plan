@@ -16,7 +16,8 @@ const EMPTY_FORM = {
   category: '기타'
 }
 
-export default function ScheduleFormModal({ open, onClose, cities, editingSchedule, onSave, onDelete }) {
+// template: 계획 템플릿에서 불러온 항목 (편집 중이 아닐 때 초기값으로 사용). city는 이름이라 cities 목록에서 id를 찾아 매칭.
+export default function ScheduleFormModal({ open, onClose, cities, editingSchedule, template, onSave, onDelete }) {
   const [form, setForm] = useState(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
 
@@ -33,10 +34,23 @@ export default function ScheduleFormModal({ open, onClose, cities, editingSchedu
         map_url: editingSchedule.map_url ?? '',
         category: editingSchedule.category ?? '기타'
       })
+    } else if (template) {
+      const matchedCity = cities.find((c) => c.name === template.city)
+      setForm({
+        city_id: matchedCity?.id ?? '',
+        schedule_date: template.date ?? '',
+        start_time: template.time ?? '',
+        end_time: '',
+        title: template.title ?? '',
+        place_name: template.place ?? '',
+        memo: template.memo ?? '',
+        map_url: '',
+        category: template.category ?? '기타'
+      })
     } else {
       setForm(EMPTY_FORM)
     }
-  }, [editingSchedule, open])
+  }, [editingSchedule, template, open, cities])
 
   const handleChange = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }))
 
