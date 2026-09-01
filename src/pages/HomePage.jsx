@@ -1,18 +1,22 @@
 import { useSchedules } from '../hooks/useSchedules'
 import { useBookings } from '../hooks/useBookings'
+import { useCities } from '../hooks/useCities'
 import ClockCard from '../components/home/ClockCard'
 import CountdownCard from '../components/home/CountdownCard'
 import TodayBriefCard from '../components/home/TodayBriefCard'
 import HotLinksRow from '../components/home/HotLinksRow'
 import { todayISO } from '../lib/dateUtils'
+import { buildCountryLabel } from '../lib/countryNames'
 
 export default function HomePage() {
   const { schedules, loading: schedulesLoading } = useSchedules()
   const { bookings, loading: bookingsLoading } = useBookings()
+  const { cities } = useCities()
 
   const today = todayISO()
   const todaySchedule = schedules.find((s) => s.schedule_date === today && s.city)
   const currentCity = todaySchedule?.city ?? null
+  const countryLabel = buildCountryLabel(cities)
 
   if (schedulesLoading || bookingsLoading) {
     return (
@@ -25,8 +29,10 @@ export default function HomePage() {
   return (
     <div className="space-y-4 px-4 pt-5">
       <div>
-        <p className="text-xs text-navy-500">신혼여행</p>
-        <h1 className="text-xl font-bold text-white">포르투갈 &amp; 이탈리아</h1>
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold-light">
+          Travel Diary
+        </p>
+        <h1 className="text-xl font-bold text-white">{countryLabel || '여행'}</h1>
       </div>
 
       <ClockCard currentCity={currentCity} />
