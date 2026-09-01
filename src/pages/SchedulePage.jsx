@@ -69,7 +69,7 @@ export default function SchedulePage() {
             className="flex items-center gap-1.5 rounded-full bg-navy-800/60 px-3 py-1.5 text-xs font-medium text-gold-light active:bg-navy-800"
           >
             <CalendarPlus size={14} />
-            계획에서 불러오기
+            여행지에서 불러오기
           </button>
         </div>
         <CityFilterBar cities={cities} activeCityId={activeCityId} onChange={setActiveCityId} />
