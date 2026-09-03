@@ -46,5 +46,14 @@ export function useTrips(travelerId) {
     [travelerId, fetchTrips]
   )
 
-  return { trips, loading, error, addTrip, refetch: fetchTrips }
+  const deleteTrip = useCallback(
+    async (id) => {
+      const { error } = await supabase.from('trips').delete().eq('id', id)
+      if (error) throw error
+      await fetchTrips()
+    },
+    [fetchTrips]
+  )
+
+  return { trips, loading, error, addTrip, deleteTrip, refetch: fetchTrips }
 }
