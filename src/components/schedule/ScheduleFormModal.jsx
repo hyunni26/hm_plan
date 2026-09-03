@@ -44,7 +44,7 @@ export default function ScheduleFormModal({ open, onClose, cities, editingSchedu
         title: template.title ?? '',
         place_name: template.place ?? '',
         memo: template.memo ?? '',
-        map_url: '',
+        map_url: template.map_url ?? '',
         category: template.category ?? '기타'
       })
     } else {
