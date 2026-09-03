@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Plus, CalendarPlus } from 'lucide-react'
+import { useTrip } from '../context/TripContext'
 import { useSchedules } from '../hooks/useSchedules'
 import { useCities } from '../hooks/useCities'
 import CityFilterBar from '../components/schedule/CityFilterBar'
@@ -9,8 +10,9 @@ import TemplateBrowserModal from '../components/schedule/TemplateBrowserModal'
 import { formatKoreanDate } from '../lib/dateUtils'
 
 export default function SchedulePage() {
-  const { schedules, loading, addSchedule, updateSchedule, deleteSchedule } = useSchedules()
-  const { cities } = useCities()
+  const { tripId } = useTrip()
+  const { schedules, loading, addSchedule, updateSchedule, deleteSchedule } = useSchedules(tripId)
+  const { cities } = useCities(tripId)
   const [activeCityId, setActiveCityId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingSchedule, setEditingSchedule] = useState(null)
