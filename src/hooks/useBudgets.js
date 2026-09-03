@@ -1,16 +1,22 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-export function useBudgets() {
+export function useBudgets(tripId) {
   const [budgets, setBudgets] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   const fetchBudgets = useCallback(async () => {
+    if (!tripId) {
+      setBudgets([])
+      setLoading(false)
+      return
+    }
     setLoading(true)
     const { data, error } = await supabase
       .from('budgets')
       .select('*')
+      .eq('trip_id', tripId)
       .order('expense_date', { ascending: false })
       .order('created_at', { ascending: false })
 
@@ -21,7 +27,7 @@ export function useBudgets() {
       setError(null)
     }
     setLoading(false)
-  }, [])
+  }, [tripId])
 
   useEffect(() => {
     fetchBudgets()
@@ -29,11 +35,11 @@ export function useBudgets() {
 
   const addBudget = useCallback(
     async (payload) => {
-      const { error } = await supabase.from('budgets').insert(payload)
+      const { error } = await supabase.from('budgets').insert({ ...payload, trip_id: tripId })
       if (error) throw error
       await fetchBudgets()
     },
-    [fetchBudgets]
+    [tripId, fetchBudgets]
   )
 
   const deleteBudget = useCallback(
