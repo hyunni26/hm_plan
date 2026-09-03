@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useTrip } from '../context/TripContext'
 import { useBookings } from '../hooks/useBookings'
 import { useCities } from '../hooks/useCities'
 import BookingCard from '../components/bookings/BookingCard'
@@ -15,8 +16,9 @@ const FILTERS = [
 ]
 
 export default function BookingsPage() {
-  const { bookings, loading, addBooking, updateBooking, deleteBooking } = useBookings()
-  const { cities } = useCities()
+  const { tripId } = useTrip()
+  const { bookings, loading, addBooking, updateBooking, deleteBooking } = useBookings(tripId)
+  const { cities } = useCities(tripId)
   const [activeType, setActiveType] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingBooking, setEditingBooking] = useState(null)
