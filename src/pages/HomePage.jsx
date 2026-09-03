@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Settings2 } from 'lucide-react'
+import { Settings2, ListTree } from 'lucide-react'
 import { useTrip } from '../context/TripContext'
 import { useSchedules } from '../hooks/useSchedules'
 import { useBookings } from '../hooks/useBookings'
@@ -41,17 +41,24 @@ export default function HomePage() {
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-gold-light">
             Travel Diary
           </p>
-          <button onClick={() => navigate('/trips')} className="block text-left">
-            <h1 className="text-xl font-bold text-white">{countryLabel || tripName}</h1>
+          <h1 className="text-xl font-bold text-white">{countryLabel || tripName}</h1>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => navigate('/trips')}
+            className="flex items-center gap-1 rounded-full bg-navy-800/60 px-2.5 py-1.5 text-[11px] font-medium text-navy-300 active:bg-navy-800"
+          >
+            <ListTree size={14} />
+            여행 목록
+          </button>
+          <button
+            onClick={() => setCityManagerOpen(true)}
+            className="rounded-full p-2 text-navy-500 active:bg-navy-800"
+            aria-label="도시 관리"
+          >
+            <Settings2 size={18} />
           </button>
         </div>
-        <button
-          onClick={() => setCityManagerOpen(true)}
-          className="rounded-full p-2 text-navy-500 active:bg-navy-800"
-          aria-label="도시 관리"
-        >
-          <Settings2 size={18} />
-        </button>
       </div>
 
       <ClockCard currentCity={currentCity} />
