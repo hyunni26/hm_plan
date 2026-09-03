@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, MapPin, LogOut } from 'lucide-react'
+import { Plus, MapPin, LogOut, Trash2 } from 'lucide-react'
 import { useTrip } from '../context/TripContext'
 import { useTrips } from '../hooks/useTrips'
 import { formatKoreanDate } from '../lib/dateUtils'
@@ -8,14 +8,30 @@ import { formatKoreanDate } from '../lib/dateUtils'
 export default function TripSelectPage() {
   const navigate = useNavigate()
   const { travelerId, travelerName, selectTrip, clearSession } = useTrip()
-  const { trips, loading, addTrip } = useTrips(travelerId)
+  const { trips, loading, addTrip, deleteTrip } = useTrips(travelerId)
   const [creating, setCreating] = useState(false)
   const [form, setForm] = useState({ name: '', start_date: '', end_date: '' })
   const [saving, setSaving] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
 
   const handlePick = (trip) => {
     selectTrip(trip)
     navigate('/')
+  }
+
+  const handleDelete = async (e, trip) => {
+    e.stopPropagation()
+    const confirmed = confirm(`"${trip.name}" 여행을 삭제할까요?\n안의 일정/예약/가계부가 모두 함께 삭제되고 되돌릴 수 없어요.`)
+    if (!confirmed) return
+
+    setDeletingId(trip.id)
+    try {
+      await deleteTrip(trip.id)
+    } catch (err) {
+      alert(`삭제 실패: ${err.message}`)
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   const handleCreate = async (e) => {
@@ -61,7 +77,7 @@ export default function TripSelectPage() {
       ) : (
         <div className="space-y-2.5">
           {trips.map((trip) => (
-            <button
+            <div
               key={trip.id}
               onClick={() => handlePick(trip)}
               className="flex w-full items-center gap-3 rounded-xl2 border border-navy-800/60 bg-navy-900/80 p-4 text-left shadow-card active:scale-[0.98]"
@@ -78,7 +94,15 @@ export default function TripSelectPage() {
                   </p>
                 )}
               </div>
-            </button>
+              <button
+                onClick={(e) => handleDelete(e, trip)}
+                disabled={deletingId === trip.id}
+                className="shrink-0 rounded-full p-2 text-navy-600 active:bg-navy-800 disabled:opacity-50"
+                aria-label="여행 삭제"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
           ))}
 
           {trips.length === 0 && !creating && (
