@@ -1,50 +1,63 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-export function useTrips(travelerId) {
-  const [trips, setTrips] = useState([])
+export function useCities(tripId) {
+  const [cities, setCities] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const fetchTrips = useCallback(async () => {
-    if (!travelerId) {
-      setTrips([])
+  const fetchCities = useCallback(async () => {
+    if (!tripId) {
+      setCities([])
       setLoading(false)
       return
     }
     setLoading(true)
     const { data, error } = await supabase
-      .from('trips')
+      .from('cities')
       .select('*')
-      .eq('traveler_id', travelerId)
-      .order('created_at', { ascending: false })
+      .eq('trip_id', tripId)
+      .order('sort_order', { ascending: true })
 
     if (error) {
       setError(error)
     } else {
-      setTrips(data ?? [])
+      setCities(data ?? [])
       setError(null)
     }
     setLoading(false)
-  }, [travelerId])
+  }, [tripId])
 
   useEffect(() => {
-    fetchTrips()
-  }, [fetchTrips])
+    fetchCities()
+  }, [fetchCities])
 
-  const addTrip = useCallback(
+  const addCity = useCallback(
     async (payload) => {
-      const { data, error } = await supabase
-        .from('trips')
-        .insert({ ...payload, traveler_id: travelerId })
-        .select()
-        .single()
+      const { error } = await supabase.from('cities').insert({ ...payload, trip_id: tripId })
       if (error) throw error
-      await fetchTrips()
-      return data
+      await fetchCities()
     },
-    [travelerId, fetchTrips]
+    [tripId, fetchCities]
   )
 
-  return { trips, loading, error, addTrip, refetch: fetchTrips }
+  const updateCity = useCallback(
+    async (id, payload) => {
+      const { error } = await supabase.from('cities').update(payload).eq('id', id)
+      if (error) throw error
+      await fetchCities()
+    },
+    [fetchCities]
+  )
+
+  const deleteCity = useCallback(
+    async (id) => {
+      const { error } = await supabase.from('cities').delete().eq('id', id)
+      if (error) throw error
+      await fetchCities()
+    },
+    [fetchCities]
+  )
+
+  return { cities, loading, error, addCity, updateCity, deleteCity, refetch: fetchCities }
 }
