@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useTrip } from '../context/TripContext'
 import { useBudgets } from '../hooks/useBudgets'
 import BudgetSummary from '../components/budget/BudgetSummary'
 import BudgetEntryForm from '../components/budget/BudgetEntryForm'
 import BudgetListItem from '../components/budget/BudgetListItem'
 
 export default function BudgetPage() {
-  const { budgets, loading, addBudget, deleteBudget, totals } = useBudgets()
+  const { tripId } = useTrip()
+  const { budgets, loading, addBudget, deleteBudget, totals } = useBudgets(tripId)
   const [formOpen, setFormOpen] = useState(false)
 
   return (
