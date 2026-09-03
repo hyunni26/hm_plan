@@ -1,30 +1,50 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-export function useCities() {
-  const [cities, setCities] = useState([])
+export function useTrips(travelerId) {
+  const [trips, setTrips] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const fetchCities = useCallback(async () => {
+  const fetchTrips = useCallback(async () => {
+    if (!travelerId) {
+      setTrips([])
+      setLoading(false)
+      return
+    }
     setLoading(true)
     const { data, error } = await supabase
-      .from('cities')
+      .from('trips')
       .select('*')
-      .order('sort_order', { ascending: true })
+      .eq('traveler_id', travelerId)
+      .order('created_at', { ascending: false })
 
     if (error) {
       setError(error)
     } else {
-      setCities(data ?? [])
+      setTrips(data ?? [])
       setError(null)
     }
     setLoading(false)
-  }, [])
+  }, [travelerId])
 
   useEffect(() => {
-    fetchCities()
-  }, [fetchCities])
+    fetchTrips()
+  }, [fetchTrips])
 
-  return { cities, loading, error, refetch: fetchCities }
+  const addTrip = useCallback(
+    async (payload) => {
+      const { data, error } = await supabase
+        .from('trips')
+        .insert({ ...payload, traveler_id: travelerId })
+        .select()
+        .single()
+      if (error) throw error
+      await fetchTrips()
+      return data
+    },
+    [travelerId, fetchTrips]
+  )
+
+  return { trips, loading, error, addTrip, refetch: fetchTrips }
 }
